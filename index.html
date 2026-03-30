@@ -10,6 +10,26 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
+    --bg: #f5f5f2;
+    --surface: #ffffff;
+    --border: #e0e0da;
+    --border-focus: #aaa;
+    --text: #111111;
+    --muted: #999;
+    --accent: #1a1a1a;
+    --accent-dim: rgba(0,0,0,0.06);
+    --mac: #2563eb;
+    --win: #16a34a;
+    --both: #7c3aed;
+    --mac-dim: rgba(37,99,235,0.08);
+    --win-dim: rgba(22,163,74,0.08);
+    --both-dim: rgba(124,58,237,0.08);
+    --radius: 10px;
+    --font-mono: 'DM Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  :root.dark {
     --bg: #0d0d0d;
     --surface: #161616;
     --border: #2a2a2a;
@@ -20,11 +40,10 @@
     --accent-dim: rgba(232,255,90,0.12);
     --mac: #3b82f6;
     --win: #22c55e;
+    --both: #a78bfa;
     --mac-dim: rgba(59,130,246,0.12);
     --win-dim: rgba(34,197,94,0.12);
-    --radius: 10px;
-    --font-mono: 'DM Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --both-dim: rgba(167,139,250,0.12);
   }
 
   body {
@@ -36,6 +55,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
+    transition: background 0.2s, color 0.2s;
   }
 
   .container {
@@ -45,6 +65,14 @@
 
   .header {
     margin-bottom: 40px;
+    position: relative;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
   }
 
   .badge {
@@ -55,19 +83,43 @@
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid rgba(232,255,90,0.3);
+    color: var(--text);
+    border: 1px solid var(--border);
     padding: 4px 10px;
     border-radius: 4px;
-    margin-bottom: 16px;
   }
 
   .badge::before {
     content: '';
     width: 5px; height: 5px;
-    background: var(--accent);
+    background: var(--mac);
     border-radius: 50%;
     animation: pulse 2s infinite;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+  }
+
+  .theme-option {
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 16px;
+    transition: background 0.15s;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .theme-option.active {
+    background: var(--accent-dim);
   }
 
   @keyframes pulse {
@@ -84,7 +136,7 @@
     color: var(--text);
   }
 
-  h1 span { color: var(--accent); }
+  h1 span { color: var(--mac); }
 
   .sub {
     margin-top: 10px;
@@ -99,6 +151,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    transition: background 0.2s, border-color 0.2s;
   }
 
   .input-row {
@@ -124,7 +177,7 @@
     font-size: 13px;
     color: var(--text);
     padding: 18px 0;
-    caret-color: var(--accent);
+    caret-color: var(--mac);
   }
 
   input::placeholder { color: var(--muted); }
@@ -164,7 +217,7 @@
 
   .filename-input input {
     width: 100%;
-    background: rgba(255,255,255,0.03);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 6px;
     outline: none;
@@ -172,8 +225,8 @@
     font-size: 12px;
     color: var(--text);
     padding: 9px 12px;
-    caret-color: var(--accent);
-    transition: border-color 0.15s;
+    caret-color: var(--mac);
+    transition: border-color 0.15s, background 0.2s;
   }
 
   .filename-input input:focus { border-color: var(--border-focus); }
@@ -183,7 +236,7 @@
 
   .actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .action-btn {
@@ -202,17 +255,15 @@
     text-decoration: none;
   }
 
-  .action-btn:first-child { border-right: 1px solid var(--border); }
+  .action-btn + .action-btn { border-left: 1px solid var(--border); }
 
-  .action-btn:hover { background: rgba(255,255,255,0.04); }
-
+  .action-btn:hover { background: rgba(0,0,0,0.04); }
+  .dark .action-btn:hover { background: rgba(255,255,255,0.04); }
   .action-btn.mac:hover { background: var(--mac-dim); }
   .action-btn.win:hover { background: var(--win-dim); }
+  .action-btn.both:hover { background: var(--both-dim); }
 
-  .action-btn .os-icon {
-    font-size: 22px;
-    margin-bottom: 2px;
-  }
+  .action-btn .os-icon { font-size: 20px; margin-bottom: 2px; }
 
   .action-btn .os-name {
     font-size: 11px;
@@ -222,6 +273,7 @@
 
   .action-btn.mac .os-name { color: var(--mac); }
   .action-btn.win .os-name { color: var(--win); }
+  .action-btn.both .os-name { color: var(--both); }
 
   .action-btn .ext {
     font-size: 9px;
@@ -231,7 +283,7 @@
   }
 
   .action-btn:disabled {
-    opacity: 0.35;
+    opacity: 0.3;
     cursor: not-allowed;
     pointer-events: none;
   }
@@ -253,6 +305,7 @@
     transition: opacity 0.2s, transform 0.2s;
     white-space: nowrap;
     z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   }
 
   .toast.show {
@@ -270,20 +323,13 @@
   }
 
   .url-preview.visible { display: block; }
-  .url-preview .valid { color: #22c55e; }
+  .url-preview .valid { color: var(--win); }
   .url-preview .invalid { color: #ef4444; }
 
-  .col-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 0 16px;
-  }
-
-  /* tip row */
   .tips {
     margin-top: 20px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
   }
 
@@ -292,6 +338,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px;
+    transition: background 0.2s, border-color 0.2s;
   }
 
   .tip-os {
@@ -304,6 +351,7 @@
 
   .tip-os.mac { color: var(--mac); }
   .tip-os.win { color: var(--win); }
+  .tip-os.both { color: var(--both); }
 
   .tip-text {
     font-size: 11px;
@@ -312,7 +360,7 @@
   }
 
   .tip-text code {
-    background: rgba(255,255,255,0.06);
+    background: var(--accent-dim);
     padding: 1px 5px;
     border-radius: 3px;
     color: var(--text);
@@ -324,9 +372,15 @@
 
 <div class="container">
   <div class="header">
-    <div class="badge">URL Shortcut Generator</div>
+    <div class="top-row">
+      <div class="badge">URL Shortcut Generator</div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="theme-option active" data-theme="light">☀️</span>
+        <span class="theme-option" data-theme="dark">🌙</span>
+      </div>
+    </div>
     <h1>Save URLs as<br/><span>Desktop Shortcuts</span></h1>
-    <p class="sub">Paste any URL → download as <strong style="color:#3b82f6">.webloc</strong> for Mac or <strong style="color:#22c55e">.url</strong> for Windows.</p>
+    <p class="sub">Paste any URL → download as <strong style="color:var(--mac)">.webloc</strong> for Mac, <strong style="color:var(--win)">.url</strong> for Windows, or <strong style="color:var(--both)">both at once</strong>.</p>
   </div>
 
   <div class="card">
@@ -354,6 +408,11 @@
         <span class="os-name">macOS</span>
         <span class="ext">.webloc</span>
       </button>
+      <button class="action-btn both" id="bothBtn" disabled>
+        <span class="os-icon">⬇️</span>
+        <span class="os-name">Save Both</span>
+        <span class="ext">.webloc + .url</span>
+      </button>
       <button class="action-btn win" id="winBtn" disabled>
         <span class="os-icon">🪟</span>
         <span class="os-name">Windows</span>
@@ -365,11 +424,15 @@
   <div class="tips">
     <div class="tip">
       <div class="tip-os mac">macOS — .webloc</div>
-      <div class="tip-text">Double-click the file to open in Safari or your default browser. Works on Desktop, Dock, and Finder.</div>
+      <div class="tip-text">Double-click to open in Safari or your default browser. Works on Desktop and Finder.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-os both">Both Files</div>
+      <div class="tip-text">Downloads both formats at once. Share across devices or keep on a USB drive.</div>
     </div>
     <div class="tip">
       <div class="tip-os win">Windows — .url</div>
-      <div class="tip-text">Double-click to open in your default browser. Pin to taskbar or place in <code>Quick Access</code>.</div>
+      <div class="tip-text">Double-click to open in your default browser. Pin to taskbar or <code>Quick Access</code>.</div>
     </div>
   </div>
 </div>
@@ -382,10 +445,20 @@
   const clearBtn = document.getElementById('clearBtn');
   const macBtn = document.getElementById('macBtn');
   const winBtn = document.getElementById('winBtn');
+  const bothBtn = document.getElementById('bothBtn');
   const urlPreview = document.getElementById('urlPreview');
   const toast = document.getElementById('toast');
+  const themeToggle = document.getElementById('themeToggle');
 
-  let currentUrl = '';
+  // Theme
+  themeToggle.querySelectorAll('.theme-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const theme = btn.dataset.theme;
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+      themeToggle.querySelectorAll('.theme-option').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
 
   function isValidUrl(str) {
     try {
@@ -422,11 +495,11 @@
     clearBtn.classList.toggle('visible', raw.length > 0);
     macBtn.disabled = !valid;
     winBtn.disabled = !valid;
+    bothBtn.disabled = !valid;
 
     if (raw.length > 0) {
       urlPreview.classList.add('visible');
       if (valid) {
-        currentUrl = raw;
         urlPreview.innerHTML = `<span class="valid">✓ Valid URL</span> — ${raw}`;
         if (!nameInput.value) {
           const suggested = getSuggestedName(raw);
@@ -455,6 +528,21 @@
     URL.revokeObjectURL(a.href);
   }
 
+  function makeWebloc(url) {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+\t<key>URL</key>
+\t<string>${url}</string>
+</dict>
+</plist>`;
+  }
+
+  function makeUrlFile(url) {
+    return `[InternetShortcut]\r\nURL=${url}\r\n`;
+  }
+
   urlInput.addEventListener('input', updateUI);
 
   clearBtn.addEventListener('click', () => {
@@ -467,27 +555,25 @@
   macBtn.addEventListener('click', () => {
     const url = urlInput.value.trim();
     const name = getFilename();
-    const content = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>URL</key>
-	<string>${url}</string>
-</dict>
-</plist>`;
-    download(content, `${name}.webloc`, 'application/octet-stream');
-    showToast(`✓ Saved ${name}.webloc`, '#3b82f6');
+    download(makeWebloc(url), `${name}.webloc`, 'application/octet-stream');
+    showToast(`✓ Saved ${name}.webloc`, '#2563eb');
   });
 
   winBtn.addEventListener('click', () => {
     const url = urlInput.value.trim();
     const name = getFilename();
-    const content = `[InternetShortcut]\r\nURL=${url}\r\n`;
-    download(content, `${name}.url`, 'application/octet-stream');
-    showToast(`✓ Saved ${name}.url`, '#22c55e');
+    download(makeUrlFile(url), `${name}.url`, 'application/octet-stream');
+    showToast(`✓ Saved ${name}.url`, '#16a34a');
   });
 
-  // Paste shortcut
+  bothBtn.addEventListener('click', () => {
+    const url = urlInput.value.trim();
+    const name = getFilename();
+    setTimeout(() => download(makeWebloc(url), `${name}.webloc`, 'application/octet-stream'), 0);
+    setTimeout(() => download(makeUrlFile(url), `${name}.url`, 'application/octet-stream'), 300);
+    showToast(`✓ Saved both files for ${name}`, '#7c3aed');
+  });
+
   document.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'v' && document.activeElement !== urlInput && document.activeElement !== nameInput) {
       urlInput.focus();
